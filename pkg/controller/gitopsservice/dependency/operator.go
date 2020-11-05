@@ -4,6 +4,7 @@ import (
 	v1 "github.com/operator-framework/api/pkg/operators/v1"
 	"github.com/operator-framework/api/pkg/operators/v1alpha1"
 	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
 )
 
 type operatorResource struct {
@@ -11,6 +12,7 @@ type operatorResource struct {
 	subscription  string
 	operatorGroup string
 	csv           string
+	createCR      func(string) (runtime.Object, string, error)
 }
 
 func (o *operatorResource) GetSubscription() *v1alpha1.Subscription {
@@ -31,6 +33,7 @@ func newArgoCDOperator(prefix string) operatorResource {
 		subscription:  "argocd-operator",
 		operatorGroup: "argocd-operator-group",
 		csv:           "argocd-operator.v0.0.14",
+		createCR:      argoCDCr,
 	}
 }
 
@@ -40,5 +43,6 @@ func newSealedSecretsOperator(prefix string) operatorResource {
 		subscription:  "sealed-secrets-operator-helm",
 		operatorGroup: "sealed-secrets-operator-group",
 		csv:           "sealed-secrets-operator-helm.v0.0.2",
+		createCR:      sealedSecretsCR,
 	}
 }
